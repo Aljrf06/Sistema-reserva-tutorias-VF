@@ -1,4 +1,4 @@
-# 📚 Spring 1: Sistema Gestión Tutorías Académicas
+# 📚 Sistema Gestión Tutorías Académicas
 Plataforma web que centraliza y automatiza la gestión de asesorías académicas entre tutores y estudiantes, 
 eliminando la coordinación manual y desorganizada que genera conflictos de horario, doble reserva y falta de seguimiento.
 
@@ -69,19 +69,6 @@ gestion-tutorias-v2/
 | PUT | `/usuarios/actualizar/{id}` | Actualizar usuario | ✅ JWT |
 | DELETE | `/usuarios/eliminar/{id}` | Eliminar usuario | ✅ JWT |
 
-## Vistas
-- Registro nuevo usuario
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5966b539-b9b1-414b-b861-ef2c71a293d9" />
-
-- Login
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/96fb2c0c-e9cb-4d85-833c-22e121219361" />
-
-- Panel 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3fad5466-3f43-488e-8370-bfa309a1f744" />
-
-- Editar
-<img width="1414" height="182" alt="image" src="https://github.com/user-attachments/assets/acc4ac05-4a79-4bc9-964a-f5c75becddaa" />
-  
 
 ## 👥 Autores
 - Alejandra Rodriguez Forero
