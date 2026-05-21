@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { register } from "../api/usuarioApi";
-import "../App.css";
+//import "../Dash.css";
+import '../styles/LoginAndRegister.css';
 
 export default function RegisterPage({ goToLogin }) {
 

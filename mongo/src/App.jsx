@@ -1,7 +1,8 @@
 import { useState } from "react";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import Dashboard from "./pages/Dashboard";
+import EstudianteDash from "./pages/EstudianteDash";
+import TutorDash from "./pages/TutorDash";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -14,7 +15,24 @@ function App() {
       : <RegisterPage goToLogin={() => setVista("login")} />;
   }
 
- return <Dashboard setToken={setToken} />;
+  const auth = {
+    id: localStorage.getItem("usuarioId"),
+    nombre: localStorage.getItem("nombre"),
+    tipo: localStorage.getItem("tipo") // 
+  };
+
+  // Función simple para limpiar todo y regresar a la vista de Login
+  const cerrarSesion = () => {
+    localStorage.clear();
+    setToken(null);
+  };
+
+  // Condición limpia: si el tipo es tutor va a su dash, de lo contrario va al de estudiante
+  return auth.tipo === "tutor"
+    ? <TutorDash auth={auth} setAuth={cerrarSesion} />
+    : <EstudianteDash auth={auth} setAuth={cerrarSesion} />;
+
+ //return <Dashboard setToken={setToken} />;
 }
 
 export default App;

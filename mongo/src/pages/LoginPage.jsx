@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { login } from "../api/usuarioApi";
-import "../App.css";
+//import "../Dash.css";
+import '../styles/LoginAndRegister.css';
 
 export default function LoginPage({ setToken, goToRegister }) {
 
@@ -13,6 +14,10 @@ export default function LoginPage({ setToken, goToRegister }) {
     try {
       const res = await login(form);
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("usuarioId", res.data.id);
+      localStorage.setItem("nombre", res.data.nombre);
+      localStorage.setItem("tipo", res.data.tipo);
+
       setToken(res.data.token);
     } catch (err) {
       setError("Credenciales incorrectas");
