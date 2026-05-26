@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { login } from "../api/usuarioApi";
-//import "../Dash.css";
 import '../styles/LoginAndRegister.css';
 
 export default function LoginPage({ setToken, goToRegister }) {

@@ -9,6 +9,7 @@ import {
 } from "../api/reservaApi";
 
 import { listarMaterias } from "../api/materiaApi";
+import { listar as listarUsuarios } from "../api/usuarioApi";
 
 import "../styles/Dashboards.css";
 
@@ -19,6 +20,8 @@ export default function EstudianteDashboard({ auth, setAuth }) {
   const [franjas, setFranjas] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [materias, setMaterias] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  //const [reservasOcultas, setReservasOcultas] = useState(new Set()); // Esta linea es para manejar las reservas ocultas xd
 
   const [filtros, setFiltros] = useState({
     materia: "",
@@ -52,16 +55,19 @@ export default function EstudianteDashboard({ auth, setAuth }) {
       const [
         resFranjas,
         resReservas,
-        resMaterias
+        resMaterias,
+        resUsuarios
       ] = await Promise.all([
         listarTodasFranjas(),
         listarReservasPorEstudiante(estudianteId),
-        listarMaterias()
+        listarMaterias(),
+        listarUsuarios()
       ]);
 
       setFranjas(resFranjas.data || []);
       setReservas(resReservas.data || []);
       setMaterias(resMaterias.data || []);
+      setUsuarios(resUsuarios.data || []);
 
     } catch (error) {
 
@@ -80,26 +86,31 @@ export default function EstudianteDashboard({ auth, setAuth }) {
   }, [cargarTodo]);
 
   const obtenerMateria = (materiaId) => {
+    return materias.find(m => m.id === materiaId);
+  };
 
-    return materias.find(
-      m => m.id === materiaId
-    );
+  const obtenerTutor = (tutorId) => {
+    return usuarios.find(u => u.id === tutorId);
+  };
+
+  const obtenerFranjaDeReserva = (franjaHorariaId) => {
+    return franjas.find(f => f.id === franjaHorariaId);
   };
 
   const verificarTraslape = (franjaNueva) => {
 
     return reservas.some(r => {
 
-      if (r.estado !== "activa") {
-        return false;
-      }
+      if (r.estado !== "activa") return false;
 
-      const fechaIgual =
-        r.fecha === franjaNueva.fecha;
+      // Cruzamos la reserva con su franja para obtener fecha y horario
+      const franjaReservada = obtenerFranjaDeReserva(r.franjaHorariaId);
+      if (!franjaReservada) return false;
 
+      const fechaIgual = franjaReservada.fecha === franjaNueva.fecha;
       const cruzaHorario =
-        franjaNueva.horaInicio < r.horaFin &&
-        franjaNueva.horaFin > r.horaInicio;
+        franjaNueva.horaInicio < franjaReservada.horaFin &&
+        franjaNueva.horaFin > franjaReservada.horaInicio;
 
       return fechaIgual && cruzaHorario;
     });
@@ -176,6 +187,7 @@ export default function EstudianteDashboard({ auth, setAuth }) {
     }
   };
 
+
   const limpiarFiltros = () => {
 
     setFiltros({
@@ -191,15 +203,13 @@ export default function EstudianteDashboard({ auth, setAuth }) {
       return false;
     }
 
-    const materia = obtenerMateria(
-      f.materiaId
-    );
+    const materia = obtenerMateria(f.materiaId);
+    const tutor = obtenerTutor(f.tutorId);
 
-    const nombreMateria =
-      materia?.nombre?.toLowerCase() || "";
-
-    const nombreTutor =
-      f.tutorNombre?.toLowerCase() || "";
+    const nombreMateria = materia?.nombre?.toLowerCase() || "";
+    const nombreTutor = tutor
+      ? `${tutor.nombre} ${tutor.apellido}`.toLowerCase()
+      : "";
 
     const matchMateria =
       !filtros.materia ||
@@ -239,10 +249,10 @@ export default function EstudianteDashboard({ auth, setAuth }) {
             </span>
 
             <div>
-              <h1>Portal de Estudiante</h1>
+              <h1>Portal para estudiantes</h1>
 
               <p>
-                Bienvenido,
+                Bienvenid@,
                 {" "}
                 {auth?.nombre}
               </p>
@@ -425,10 +435,8 @@ export default function EstudianteDashboard({ auth, setAuth }) {
 
             franjasDisponibles.map(f => {
 
-              const materia =
-                obtenerMateria(
-                  f.materiaId
-                );
+              const materia = obtenerMateria(f.materiaId);
+              const tutor = obtenerTutor(f.tutorId);
 
               return (
 
@@ -461,8 +469,9 @@ export default function EstudianteDashboard({ auth, setAuth }) {
                     <p>
                       👨‍🏫 Tutor:
                       {" "}
-                      {f.tutorNombre ||
-                        "No disponible"}
+                      {tutor
+                        ? `${tutor.nombre} ${tutor.apellido}`
+                        : "No disponible"}
                     </p>
 
                     <p>
@@ -575,35 +584,30 @@ export default function EstudianteDashboard({ auth, setAuth }) {
 
                   reservas.map(r => {
 
-                    const materia =
-                      obtenerMateria(
-                        r.materiaId
-                      );
+                    // Cruzamos la reserva con su franja para obtener todos los datos
+
+                    const franja = obtenerFranjaDeReserva(r.franjaHorariaId);
+                    const materia = obtenerMateria(franja?.materiaId);
+                    const tutor = obtenerTutor(franja?.tutorId);
 
                     return (
 
                       <tr key={r.id}>
 
                         <td>
-                          {materia?.nombre ||
-                            "N/A"}
+                          {materia?.nombre || "N/A"}
                         </td>
 
                         <td>
-                          {r.tutorNombre ||
-                            "N/A"}
+                          {tutor
+                            ? `${tutor.nombre} ${tutor.apellido}`
+                            : "N/A"}
                         </td>
 
                         <td>
-
-                          {r.fecha}
-
+                          {franja?.fecha || ""}
                           <br />
-
-                          {r.horaInicio}
-                          {" - "}
-                          {r.horaFin}
-
+                          {franja?.horaInicio} - {franja?.horaFin}
                         </td>
 
                         <td>
@@ -632,30 +636,22 @@ export default function EstudianteDashboard({ auth, setAuth }) {
                                 "bold"
                             }}
                           >
-                            {r.estado}
+                            {r.estado.charAt(0).toUpperCase() + r.estado.slice(1)}
                           </span>
 
                         </td>
 
                         <td>
-
-                          {r.estado ===
-                            "activa" && (
-
-                            <button
-                              className="btn-delete"
-                              onClick={() =>
-                                handleCancelar(
-                                  r.id
-                                )
-                              }
-                            >
-                              Cancelar
-                            </button>
-
-                          )}
-
+                          <button
+                           className="btn-delete"
+                           onClick={() => handleCancelar(r.id)}
+                           disabled={r.estado !== "activa"}
+    
+                          >
+                            Cancelar
+                          </button>
                         </td>
+
 
                       </tr>
                     );

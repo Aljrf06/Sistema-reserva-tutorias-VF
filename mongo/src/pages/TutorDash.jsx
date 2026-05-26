@@ -6,6 +6,8 @@ import {
   eliminarMateria
 } from "../api/materiaApi";
 
+import { listar as listarUsuarios } from "../api/usuarioApi";
+
 import {
   crearFranja,
   listarFranjasPorTutor,
@@ -35,6 +37,7 @@ export default function TutorDashboard({ auth, setAuth }) {
   const [materias, setMaterias] = useState([]);
   const [franjas, setFranjas] = useState([]);
   const [reservas, setReservas] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
 
   const [panel, setPanel] = useState(null);
   const [editandoId, setEditandoId] = useState(null);
@@ -61,10 +64,15 @@ export default function TutorDashboard({ auth, setAuth }) {
   };
 
   const obtenerNombreMateria = (materiaId) => {
-
     const materia = materias.find(m => m.id === materiaId);
-
     return materia?.nombre || "Sin materia";
+  };
+
+  const obtenerNombreEstudiante = (estudianteId) => {
+    const usuario = usuarios.find(u => u.id === estudianteId);
+    return usuario
+      ? `${usuario.nombre} ${usuario.apellido}`
+      : "N/A";
   };
 
   const obtenerReservaDeFranja = (franjaId) => {
@@ -81,15 +89,17 @@ export default function TutorDashboard({ auth, setAuth }) {
 
     try {
 
-      const [resMat, resFra, resRes] = await Promise.all([
+      const [resMat, resFra, resRes, resUsr] = await Promise.all([
         listarMaterias(),
         listarFranjasPorTutor(tutorId),
-        listarReservasPorTutor(tutorId)
+        listarReservasPorTutor(tutorId),
+        listarUsuarios()
       ]);
 
       setMaterias(resMat.data || []);
       setFranjas(resFra.data || []);
       setReservas(resRes.data || []);
+      setUsuarios(resUsr.data || []);
 
     } catch (error) {
 
@@ -373,16 +383,32 @@ export default function TutorDashboard({ auth, setAuth }) {
     }
   };
 
+
+
   return (
+    
     <div className="dashboard">
 
-      <div className="main-content">
+      <main className="main-content">
 
         <header className="header">
 
-          <div>
-            <h1>Portal Tutor</h1>
-            <p>Bienvenido {auth?.nombre}</p>
+          <div className="header-title">
+
+            <span className="icon-book">
+              🎓
+            </span>
+
+            <div>
+              <h1>Portal para tutores</h1>
+
+              <p>
+                Bienvenid@,
+                {" "}
+                {auth?.nombre}
+              </p>
+            </div>
+
           </div>
 
           <button
@@ -687,7 +713,13 @@ export default function TutorDashboard({ auth, setAuth }) {
 
         <section className="reservas-section">
 
-          <h2>Reservas de Tutorías</h2>
+          <div className="section-title">
+
+            <h2>
+              Reservas de tutorías
+            </h2>
+
+          </div>
 
           <table>
 
@@ -713,7 +745,9 @@ export default function TutorDashboard({ auth, setAuth }) {
 
               ) : (
 
-                reservas.map(r => {
+                reservas
+                
+                .map(r => {
 
                   const franja = franjas.find(
                     f => f.id === r.franjaHorariaId
@@ -729,7 +763,7 @@ export default function TutorDashboard({ auth, setAuth }) {
                     <tr key={r.id}>
 
                       <td>
-                        {r.estudianteNombre || "N/A"}
+                        {obtenerNombreEstudiante(r.estudianteId)}
                       </td>
 
                       <td>
@@ -759,25 +793,22 @@ export default function TutorDashboard({ auth, setAuth }) {
                             fontWeight: "bold"
                           }}
                         >
-                          {r.estado}
+                          {r.estado.charAt(0).toUpperCase() + r.estado.slice(1)}
                         </span>
 
                       </td>
 
+
                       <td>
-
-                        {activa && (
-                          <button
-                            className="btn-delete"
-                            onClick={() =>
-                              handleCancelarReserva(r.id)
-                            }
-                          >
-                            Cancelar
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleCancelarReserva(r.id)}
+                          disabled={!activa}
+                        >
+                          Cancelar
                           </button>
-                        )}
-
                       </td>
+
 
                     </tr>
                   );
@@ -790,9 +821,10 @@ export default function TutorDashboard({ auth, setAuth }) {
 
         </section>
 
+      </main>
+
       </div>
 
-    </div>
+    //</div>
   );
 }
-
