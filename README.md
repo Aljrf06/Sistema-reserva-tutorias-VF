@@ -40,35 +40,56 @@ gestion-tutorias-v2/
 │   │           └── application-example.properties
 │   └── pom.xml
 │
-├── mongo/                            # React + Vite
-│   ├── src/
-│   │   ├── api/
-│   │   │   └── usuarioApi.js         # Llamadas al backend
-│   │   ├── pages/
-│   │   │   ├── LoginPage.jsx         # Pantalla de login
-│   │   │   ├── RegisterPage.jsx      # Registro de usuario
-│   │   │   └── Dashboard.jsx         # CRUD de usuarios
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
-│
+mongo/                                    # Frontend React + Vite
+├── public/
+├── src/
+│   ├── api/
+│   │   ├── franjaApi.js                  # Llamadas API franjas horarias
+│   │   ├── materiaApi.js                 # Llamadas API materias
+│   │   ├── reservaApi.js                 # Llamadas API reservas
+│   │   └── usuarioApi.js                 # Llamadas API usuarios
+│   ├── assets/
+│   ├── components/
+│   │   ├── UsuarioForm.jsx               # Formulario de usuario
+│   │   └── UsuarioList.jsx               # Lista de usuarios
+│   ├── pages/
+│   │   ├── EstudianteDash.jsx            # Dashboard del estudiante
+│   │   ├── LoginPage.jsx                 # Pantalla de login
+│   │   ├── RegisterPage.jsx              # Pantalla de registro
+│   │   └── TutorDash.jsx                 # Dashboard del tutor
+│   ├── styles/
+│   │   ├── Dashboards.css                # Estilos dashboards
+│   │   └── LoginAndRegister.css          # Estilos login y registro
+│   ├── App.jsx                           # Componente principal
+│   ├── index.css                         # Estilos globales
+│   └── main.jsx                          # Punto de entrada
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
 └── README.md
 ```
-## 🔌 Endpoints del API
- 
-### Autenticación
-| Método | Endpoint | Descripción | 
-|--------|----------|-------------|
-| POST | `/usuarios/registrar` | Registrar nuevo usuario |
-| POST | `/usuarios/login` | Iniciar sesión |
- 
-### CRUD Usuarios
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| GET | `/usuarios/listar` | Listar todos los usuarios | ✅ JWT |
-| PUT | `/usuarios/actualizar/{id}` | Actualizar usuario | ✅ JWT |
-| DELETE | `/usuarios/eliminar/{id}` | Eliminar usuario | ✅ JWT |
+## ✨ Funcionalidades
 
+- Registro e inicio de sesión con JWT
+- Gestión de usuarios (tutores y estudiantes)
+- Reserva de tutorías académicas
+- Validación de conflictos de horario
+- Panel independiente para tutor y estudiante
+- CRUD de materias y franjas horarias
+- Persistencia de datos en MongoDB Atlas
+
+## 🔐 Seguridad
+
+El sistema implementa autenticación y autorización mediante JSON Web Tokens (JWT).
+
+- Inicio de sesión seguro
+- Protección de rutas privadas
+- Validación de tokens en cada petición
+- Configuración de Spring Security
+
+## 📊 Diapositivas
+[Canva](https://canva.link/tbgy3wkizxth9i4)
 
 ## 👥 Autores
 - Alejandra Rodriguez Forero
