@@ -5,7 +5,7 @@ eliminando la coordinación manual y desorganizada que genera conflictos de hora
 ## 🛠️ Tecnologías Utilizadas
 - MongoDB Atlas --	Base de datos no relacional hospedada en la nube 
 - Spring Boot	-- API REST con autenticación JWT
-- React -- Interfaz de usuario con Login y CRUD
+- React + Vite -- Interfaz de usuario con Login y CRUD
 
 ## 📁 Estructura del Proyecto
  
